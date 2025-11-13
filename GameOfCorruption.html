@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>GameOfCorruption</title>
+  <style>
+    body {
+      background-color: #0e0e0e;
+      color: #f0f0f0;
+      font-family: 'Segoe UI', sans-serif;
+      text-align: center;
+      padding: 40px;
+    }
+
+    h1 {
+      color: #f5b400;
+      text-shadow: 0 0 10px #f5b40088;
+      font-size: 2.5em;
+    }
+
+    #stats {
+      display: flex;
+      justify-content: center;
+      gap: 40px;
+      margin-top: 20px;
+      font-size: 1.1em;
+    }
+
+    #story {
+      margin-top: 30px;
+      font-size: 1.2em;
+      line-height: 1.6em;
+      max-width: 700px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    button {
+      background-color: #222;
+      color: #f5b400;
+      border: 2px solid #f5b400;
+      padding: 10px 25px;
+      margin: 10px;
+      font-size: 1em;
+      cursor: pointer;
+      border-radius: 6px;
+      transition: all 0.2s ease-in-out;
+    }
+
+    button:hover {
+      background-color: #f5b400;
+      color: #111;
+    }
+
+    #game-over {
+      font-size: 1.3em;
+      color: #f5b400;
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+  <h1>GameOfCorruption</h1>
+
+  <div id="stats">
+    <div>💰 Poder: <span id="score">0</span></div>
+    <div>👥 Apoio Popular: <span id="popularity">50</span>%</div>
+  </div>
+
+  <p id="story">
+    Você acaba de assumir um cargo poderoso no governo.  
+    Todos os olhos estão sobre você. Qual será sua primeira decisão?
+  </p>
+
+  <div id="choices">
+    <button onclick="choose('honesto')">Prometer um governo limpo</button>
+    <button onclick="choose('corrupto')">Negociar com lobistas</button>
+  </div>
+
+  <div id="game-over"></div>
+
+  <script>
+    let score = 0;
+    let popularity = 50;
+
+    function updateStats(changeScore = 0, changePop = 0) {
+      score += changeScore;
+      popularity += changePop;
+
+      if (popularity > 100) popularity = 100;
+      if (popularity < 0) popularity = 0;
+
+      document.getElementById("score").textContent = score;
+      document.getElementById("popularity").textContent = popularity;
+    }
+
+    function gameOver(message) {
+      document.getElementById("game-over").innerHTML = `<br><strong>${message}</strong><br><br><button onclick="location.reload()">Jogar Novamente</button>`;
+      document.getElementById("choices").innerHTML = "";
+    }
+
+    function choose(option) {
+      const story = document.getElementById("story");
+      const choices = document.getElementById("choices");
+
+      if (option === 'honesto') {
+        story.innerHTML = `
+          Você inicia uma campanha contra a corrupção.<br>
+          Antigos aliados começam a te ver como uma ameaça.
+        `;
+        updateStats(+5, +10);
+        choices.innerHTML = `
+          <button onclick="choose('resistir')">Resistir à pressão</button>
+          <button onclick="choose('ceder')">Fazer acordos políticos</button>
+        `;
+      }
+
+      else if (option === 'corrupto') {
+        story.innerHTML = `
+          Você aceita propinas e manipula licitações.<br>
+          O dinheiro flui, mas a imprensa começa a investigar.
+        `;
+        updateStats(+20, -10);
+        choices.innerHTML = `
+          <button onclick="choose('subornar')">Subornar jornalistas</button>
+          <button onclick="choose('assumir')">Assumir a culpa publicamente</button>
+        `;
+      }
+
+      else if (option === 'resistir') {
+        updateStats(+10, +20);
+        story.innerHTML = `
+          Você mantém sua integridade e expõe um grande esquema de corrupção!<br>
+          O povo te apoia, mas sua vida nunca mais será a mesma.<br><br>
+          <strong>Final: O Herói Solitário</strong>
+        `;
+        gameOver("Você venceu com honra e respeito popular!");
+      }
+
+      else if (option === 'ceder') {
+        updateStats(+5, -15);
+        story.innerHTML = `
+          Você faz concessões políticas para sobreviver.<br>
+          O governo continua... mas a corrupção também.<br><br>
+          <strong>Final: O Político Cínico</strong>
+        `;
+        gameOver("Você sobreviveu... mas perdeu o respeito do povo.");
+      }
+
+      else if (option === 'subornar') {
+        updateStats(+10, -40);
+        story.innerHTML = `
+          O suborno falha. As manchetes revelam tudo e você é preso.<br><br>
+          <strong>Final: O Escândalo Nacional</strong>
+        `;
+        gameOver("Você perdeu tudo — poder, respeito e liberdade.");
+      }
+
+      else if (option === 'assumir') {
+        updateStats(-10, +25);
+        story.innerHTML = `
+          Você assume seus erros e pede perdão ao povo.<br>
+          Apesar das críticas, ganha respeito por sua honestidade.<br><br>
+          <strong>Final: A Redenção</strong>
+        `;
+        gameOver("Você perdeu poder, mas ganhou dignidade.");
+      }
+    }
+  </script>
+</body>
+</html>
