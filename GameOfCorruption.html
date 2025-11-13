@@ -10,20 +10,46 @@
       font-family: 'Segoe UI', sans-serif;
       text-align: center;
       padding: 40px;
+      overflow-x: hidden;
     }
 
     h1 {
       color: #f5b400;
       text-shadow: 0 0 10px #f5b40088;
-      font-size: 2.5em;
+      font-size: 2.8em;
+      margin-bottom: 10px;
     }
 
     #stats {
       display: flex;
       justify-content: center;
       gap: 40px;
-      margin-top: 20px;
-      font-size: 1.1em;
+      margin-top: 10px;
+      font-size: 1em;
+    }
+
+    .bar-container {
+      width: 200px;
+      height: 18px;
+      background-color: #333;
+      border-radius: 5px;
+      overflow: hidden;
+      margin-top: 5px;
+    }
+
+    .bar {
+      height: 100%;
+      transition: width 0.4s ease-in-out;
+    }
+
+    #power-bar {
+      background-color: #f5b400;
+      width: 0%;
+    }
+
+    #popularity-bar {
+      background-color: #2ecc71;
+      width: 50%;
     }
 
     #story {
@@ -33,6 +59,7 @@
       max-width: 700px;
       margin-left: auto;
       margin-right: auto;
+      transition: opacity 0.5s;
     }
 
     button {
@@ -57,18 +84,30 @@
       color: #f5b400;
       margin-top: 20px;
     }
+
+    footer {
+      margin-top: 40px;
+      font-size: 0.8em;
+      color: #666;
+    }
   </style>
 </head>
 <body>
   <h1>GameOfCorruption</h1>
 
   <div id="stats">
-    <div>💰 Poder: <span id="score">0</span></div>
-    <div>👥 Apoio Popular: <span id="popularity">50</span>%</div>
+    <div>
+      💰 Poder: <span id="score">0</span>
+      <div class="bar-container"><div id="power-bar" class="bar"></div></div>
+    </div>
+    <div>
+      👥 Apoio Popular: <span id="popularity">50</span>%
+      <div class="bar-container"><div id="popularity-bar" class="bar"></div></div>
+    </div>
   </div>
 
   <p id="story">
-    Você acaba de assumir um cargo poderoso no governo.  
+    Você acaba de assumir o cargo mais alto do país.  
     Todos os olhos estão sobre você. Qual será sua primeira decisão?
   </p>
 
@@ -79,9 +118,27 @@
 
   <div id="game-over"></div>
 
+  <!-- Sons -->
+  <audio id="click-sound" src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_eb0a6df7a0.mp3?filename=click-124467.mp3" preload="auto"></audio>
+  <audio id="end-sound" src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_cfb4c85df4.mp3?filename=success-1-6297.mp3" preload="auto"></audio>
+  <audio id="bg-music" src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_b9ef9a7e1e.mp3?filename=dramatic-ambient-11263.mp3" preload="auto" loop></audio>
+
+  <footer>© 2025 GameOfCorruption – Criado por [Seu Nome]</footer>
+
   <script>
     let score = 0;
     let popularity = 50;
+    let round = 1;
+
+    const clickSound = document.getElementById('click-sound');
+    const endSound = document.getElementById('end-sound');
+    const bgMusic = document.getElementById('bg-music');
+
+    // Inicia música de fundo
+    bgMusic.volume = 0.2;
+    bgMusic.play().catch(() => {
+      console.log("O navegador bloqueou o autoplay — clique em algo para iniciar a música.");
+    });
 
     function updateStats(changeScore = 0, changePop = 0) {
       score += changeScore;
@@ -92,78 +149,105 @@
 
       document.getElementById("score").textContent = score;
       document.getElementById("popularity").textContent = popularity;
+
+      document.getElementById("power-bar").style.width = Math.min(score, 100) + "%";
+      document.getElementById("popularity-bar").style.width = popularity + "%";
     }
 
     function gameOver(message) {
-      document.getElementById("game-over").innerHTML = `<br><strong>${message}</strong><br><br><button onclick="location.reload()">Jogar Novamente</button>`;
+      document.getElementById("game-over").innerHTML = `
+        <br><strong>${message}</strong><br><br>
+        <button onclick="location.reload()">Jogar Novamente</button>
+      `;
       document.getElementById("choices").innerHTML = "";
+      endSound.play();
     }
 
     function choose(option) {
+      clickSound.play();
+
       const story = document.getElementById("story");
       const choices = document.getElementById("choices");
 
-      if (option === 'honesto') {
-        story.innerHTML = `
-          Você inicia uma campanha contra a corrupção.<br>
-          Antigos aliados começam a te ver como uma ameaça.
-        `;
-        updateStats(+5, +10);
-        choices.innerHTML = `
-          <button onclick="choose('resistir')">Resistir à pressão</button>
-          <button onclick="choose('ceder')">Fazer acordos políticos</button>
-        `;
-      }
-
-      else if (option === 'corrupto') {
-        story.innerHTML = `
-          Você aceita propinas e manipula licitações.<br>
-          O dinheiro flui, mas a imprensa começa a investigar.
-        `;
-        updateStats(+20, -10);
-        choices.innerHTML = `
-          <button onclick="choose('subornar')">Subornar jornalistas</button>
-          <button onclick="choose('assumir')">Assumir a culpa publicamente</button>
-        `;
+      if (round === 1) {
+        if (option === 'honesto') {
+          story.innerHTML = `
+            Você inicia uma campanha contra a corrupção.<br>
+            Antigos aliados começam a te ver como uma ameaça.
+          `;
+          updateStats(+5, +10);
+          choices.innerHTML = `
+            <button onclick="choose('resistir')">Resistir à pressão</button>
+            <button onclick="choose('ceder')">Fazer acordos políticos</button>
+          `;
+        } else {
+          story.innerHTML = `
+            Você aceita propinas e manipula licitações.<br>
+            O dinheiro flui, mas a imprensa começa a investigar.
+          `;
+          updateStats(+20, -10);
+          choices.innerHTML = `
+            <button onclick="choose('subornar')">Subornar jornalistas</button>
+            <button onclick="choose('assumir')">Assumir a culpa publicamente</button>
+          `;
+        }
+        round++;
       }
 
       else if (option === 'resistir') {
         updateStats(+10, +20);
         story.innerHTML = `
-          Você mantém sua integridade e expõe um grande esquema de corrupção!<br>
-          O povo te apoia, mas sua vida nunca mais será a mesma.<br><br>
-          <strong>Final: O Herói Solitário</strong>
+          Você mantém sua integridade e expõe um grande esquema!<br>
+          O povo te apoia e você ganha destaque internacional.<br><br>
+          Uma eleição se aproxima — vai manter o idealismo ou buscar poder?
         `;
-        gameOver("Você venceu com honra e respeito popular!");
+        choices.innerHTML = `
+          <button onclick="choose('idealismo')">Continuar idealista</button>
+          <button onclick="choose('poder')">Usar fama para subir mais</button>
+        `;
       }
 
       else if (option === 'ceder') {
-        updateStats(+5, -15);
+        updateStats(+10, -15);
         story.innerHTML = `
-          Você faz concessões políticas para sobreviver.<br>
-          O governo continua... mas a corrupção também.<br><br>
-          <strong>Final: O Político Cínico</strong>
+          Você faz concessões para sobreviver politicamente.<br>
+          O sistema continua o mesmo, mas você mantém seu cargo.<br><br>
+          Agora surge uma crise econômica. O que fará?
         `;
-        gameOver("Você sobreviveu... mas perdeu o respeito do povo.");
+        choices.innerHTML = `
+          <button onclick="choose('ajudar')">Ajudar o povo</button>
+          <button onclick="choose('roubar')">Desviar fundos de emergência</button>
+        `;
       }
 
       else if (option === 'subornar') {
         updateStats(+10, -40);
-        story.innerHTML = `
-          O suborno falha. As manchetes revelam tudo e você é preso.<br><br>
-          <strong>Final: O Escândalo Nacional</strong>
-        `;
-        gameOver("Você perdeu tudo — poder, respeito e liberdade.");
+        gameOver("O suborno falha. As manchetes revelam tudo — você é preso. Final: Escândalo Nacional.");
       }
 
       else if (option === 'assumir') {
         updateStats(-10, +25);
-        story.innerHTML = `
-          Você assume seus erros e pede perdão ao povo.<br>
-          Apesar das críticas, ganha respeito por sua honestidade.<br><br>
-          <strong>Final: A Redenção</strong>
-        `;
-        gameOver("Você perdeu poder, mas ganhou dignidade.");
+        gameOver("Você assume seus erros e pede perdão ao povo. Final: Redenção Política.");
+      }
+
+      else if (option === 'idealismo') {
+        updateStats(+15, +30);
+        gameOver("Você se torna símbolo de esperança. O mundo te reconhece como exemplo de liderança ética.");
+      }
+
+      else if (option === 'poder') {
+        updateStats(+30, -25);
+        gameOver("Seu ego cresce, o povo se afasta e seu império político desaba. Final: A Queda do Herói.");
+      }
+
+      else if (option === 'ajudar') {
+        updateStats(+10, +20);
+        gameOver("Você salva o país da crise e recupera a confiança popular. Final: O Líder do Povo.");
+      }
+
+      else if (option === 'roubar') {
+        updateStats(+20, -50);
+        gameOver("Você enriquece enquanto o país afunda. Final: O Ditador Ganancioso.");
       }
     }
   </script>
