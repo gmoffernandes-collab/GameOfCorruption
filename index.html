@@ -130,12 +130,12 @@ function gameOver(finalText) {
 
 function determineFinal() {
   // Finais puros
-  if (honest >= 70) return "FINAL: THE SAINT — Pure honesty prevailed.";
-  if (corrupt >= 70) return "FINAL: THE TYRANT — Absolute corruption rules.";
+  if (honest >= 100) return "FINAL: THE SAINT — Pure honesty prevailed.";
+  if (corrupt >= 100) return "FINAL: THE TYRANT — Absolute corruption rules.";
 
   // Finais intermediários
-  if (honest >= 50 && corrupt <= 30) return "FINAL: THE GUARDIAN OF TRUTH — Integrity shaped the nation.";
-  if (corrupt >= 50 && honest <= 30) return "FINAL: THE MANIPULATOR — Society bowed to your will.";
+  if (honest >= 70 && corrupt <= 30) return "FINAL: THE GUARDIAN OF TRUTH — Integrity shaped the nation.";
+  if (corrupt >= 70 && honest <= 30) return "FINAL: THE MANIPULATOR — Society bowed to your will.";
 
   // Mistura alta
   if (honest >= 50 && corrupt >= 50) return "FINAL: THE DUAL MASK — You balanced power and honesty.";
@@ -164,13 +164,13 @@ function choose(option) {
   /* ---------------- PHASE 1 ---------------- */
   if (phase === 1) {
     if (option === "honest1") {
-      honest += 15;
+      honest += 20; // ajustado
       story.innerHTML = "You openly share your policies with the citizens.";
       choices.innerHTML = `
         <button onclick="choose('honest2')">Investigate government waste</button>
         <button onclick="choose('corrupt2')">Privately pressure rivals</button>`;
     } else {
-      corrupt += 15;
+      corrupt += 20; // ajustado
       story.innerHTML = "You secretly negotiate lucrative deals with elite businessmen.";
       choices.innerHTML = `
         <button onclick="choose('corrupt3')">Bribe officials quietly</button>
@@ -184,25 +184,25 @@ function choose(option) {
   /* ---------------- PHASE 2 ---------------- */
   if (phase === 2) {
     if (option === "honest2") {
-      honest += 15;
+      honest += 20;
       story.innerHTML = "You uncover embezzlement in the national budget.";
       choices.innerHTML = `
         <button onclick="choose('honest4')">Expose the corrupt ministers</button>
         <button onclick="choose('corrupt4')">Use it to gain political leverage</button>`;
     } else if (option === "corrupt2") {
-      corrupt += 15;
+      corrupt += 20;
       story.innerHTML = "You manipulate rival politicians behind closed doors.";
       choices.innerHTML = `
         <button onclick="choose('corrupt5')">Demand loyalty in return for favors</button>
         <button onclick="choose('honest5')">Publicly justify your actions</button>`;
     } else if (option === "corrupt3") {
-      corrupt += 15;
+      corrupt += 20;
       story.innerHTML = "Officials follow your orders to secure wealth.";
       choices.innerHTML = `
         <button onclick="choose('corrupt6')">Suppress media coverage</button>
         <button onclick="choose('honest6')">Leverage media for partial truth</button>`;
     } else if (option === "honest3") {
-      honest += 15;
+      honest += 20;
       story.innerHTML = "Transparency boosts your popularity.";
       choices.innerHTML = `
         <button onclick="choose('honest7')">Implement citizen oversight</button>
@@ -215,8 +215,8 @@ function choose(option) {
 
   /* ---------------- PHASE 3 ---------------- */
   if (phase === 3) {
-    if (option.includes("honest")) honest += 15;
-    else corrupt += 15;
+    if (option.includes("honest")) honest += 20;
+    else corrupt += 20;
 
     story.innerHTML = "Your actions are shaping the nation deeply.";
     choices.innerHTML = `
@@ -230,8 +230,8 @@ function choose(option) {
 
   /* ---------------- PHASE 4 (FINAL) ---------------- */
   if (phase === 4) {
-    if (option.includes("honest")) honest += 15;
-    else corrupt += 15;
+    if (option.includes("honest")) honest += 20;
+    else corrupt += 20;
 
     updateBars();
     const ending = determineFinal();
