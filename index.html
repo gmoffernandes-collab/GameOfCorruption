@@ -1,116 +1,97 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>GameOfCorruption</title>
+<meta charset="UTF-8">
+<title>Game of Corruption</title>
 
-  <style>
-    body {
-      background-color: #0e0e0e;
-      color: #f0f0f0;
-      font-family: 'Segoe UI', sans-serif;
-      text-align: center;
-      padding: 40px;
-    }
+<style>
+body {
+  background-color: #0e0e0e;
+  color: #f0f0f0;
+  font-family: 'Segoe UI', sans-serif;
+  text-align: center;
+  padding: 40px;
+}
+h1 {
+  color: #f5b400;
+  text-shadow: 0 0 10px #f5b40088;
+  font-size: 2.8em;
+  margin-bottom: 10px;
+}
+#stats {
+  display: flex;
+  justify-content: center;
+  gap: 40px;
+  margin-top: 10px;
+  font-size: 1em;
+}
+.bar-container {
+  width: 200px;
+  height: 18px;
+  background-color: #333;
+  border-radius: 5px;
+  overflow: hidden;
+  margin-top: 5px;
+}
+.bar {
+  height: 100%;
+  transition: width 0.4s ease-in-out;
+}
+#power-bar { background-color: #f5b400; width: 0%; }
+#popularity-bar { background-color: #2ecc71; width: 0%; }
+#story {
+  margin-top: 30px;
+  font-size: 1.2em;
+  line-height: 1.6em;
+  max-width: 700px;
+  margin-left: auto;
+  margin-right: auto;
+}
+button {
+  background-color: #222;
+  color: #f5b400;
+  border: 2px solid #f5b400;
+  padding: 10px 25px;
+  margin: 10px;
+  font-size: 1em;
+  cursor: pointer;
+  border-radius: 6px;
+  transition: all 0.2s ease-in-out;
+}
+button:hover { background-color: #f5b400; color: #111; }
+#game-over {
+  font-size: 1.3em;
+  color: #f5b400;
+  margin-top: 20px;
+}
+</style>
 
-    h1 {
-      color: #f5b400;
-      text-shadow: 0 0 10px #f5b40088;
-      font-size: 2.8em;
-      margin-bottom: 10px;
-    }
-
-    #stats {
-      display: flex;
-      justify-content: center;
-      gap: 40px;
-      margin-top: 10px;
-      font-size: 1em;
-    }
-
-    .bar-container {
-      width: 200px;
-      height: 18px;
-      background-color: #333;
-      border-radius: 5px;
-      overflow: hidden;
-      margin-top: 5px;
-    }
-
-    .bar {
-      height: 100%;
-      transition: width 0.4s ease-in-out;
-    }
-
-    #honest-bar { background-color: #2ecc71; width: 0%; }
-    #corrupt-bar { background-color: #e74c3c; width: 0%; }
-
-    #story {
-      margin-top: 30px;
-      font-size: 1.2em;
-      line-height: 1.6em;
-      max-width: 700px;
-      margin-left: auto;
-      margin-right: auto;
-      transition: opacity 0.5s;
-    }
-
-    button {
-      background-color: #222;
-      color: #f5b400;
-      border: 2px solid #f5b400;
-      padding: 10px 25px;
-      margin: 10px;
-      font-size: 1em;
-      cursor: pointer;
-      border-radius: 6px;
-      transition: all 0.2s;
-    }
-
-    button:hover {
-      background-color: #f5b400;
-      color: #111;
-    }
-
-    #game-over {
-      font-size: 1.3em;
-      color: #f5b400;
-      margin-top: 20px;
-    }
-  </style>
 </head>
-
 <body>
+<h1>Game of Corruption</h1>
 
-  <h1>GameOfCorruption</h1>
-
-  <div id="stats">
-    <div>
-      🟢 Honesty: <span id="honest-val">0</span>
-      <div class="bar-container"><div id="honest-bar" class="bar"></div></div>
-    </div>
-
-    <div>
-      🔴 Corruption: <span id="corrupt-val">0</span>
-      <div class="bar-container"><div id="corrupt-bar" class="bar"></div></div>
-    </div>
+<div id="stats">
+  <div>
+    👥 Honest: <span id="score">0</span>
+    <div class="bar-container"><div id="power-bar" class="bar"></div></div>
   </div>
-
-  <p id="story">
-    When you need to make an unpopular decision (such as raising or lowering taxes), what criteria do you use to ensure ethics and public interest?
-  </p>
-
-  <div id="choices">
-    <button onclick="choose('honest1')">If necessary, I will do it even if it's unpopular.</button>
-    <button onclick="choose('corrupt1')">I decide what is right.</button>
+  <div>
+    💰 Corrupt: <span id="popularity">0</span>
+    <div class="bar-container"><div id="popularity-bar" class="bar"></div></div>
   </div>
+</div>
 
-  <div id="game-over"></div>
+<p id="story">A big decision must be made. Will you act with integrity or with power?</p>
 
-  <!-- Sounds -->
-  <audio id="click-sound" src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_eb0a6df7a0.mp3?filename=click-124467.mp3" preload="auto"></audio>
-  <audio id="end-sound" src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_cfb4c85df4.mp3?filename=success-1-6297.mp3" preload="auto"></audio>
-  <audio id="bg-music" src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_b9ef9a7e1e.mp3?filename=dramatic-ambient-11263.mp3" preload="auto" loop></audio>
+<div id="choices">
+  <button onclick="choose('honest1')">Act with integrity</button>
+  <button onclick="choose('corrupt1')">Use your authority</button>
+</div>
+
+<div id="game-over"></div>
+
+<audio id="click-sound" src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_eb0a6df7a0.mp3?filename=click-124467.mp3"></audio>
+<audio id="end-sound" src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_cfb4c85df4.mp3?filename=success-1-6297.mp3"></audio>
 
 <script>
 let honest = 0;
@@ -118,109 +99,122 @@ let corrupt = 0;
 let phase = 1;
 
 let history = [];
-let earlyCorrupt = false;
 let earlyHonest = false;
+let earlyCorrupt = false;
 
-const clickSound = document.getElementById("click-sound");
-const endSound = document.getElementById("end-sound");
-const bg = document.getElementById("bg-music");
-
-bg.volume = 0.2;
-bg.play().catch(() => {});
-
-function updateBars() {
+function updateStats() {
   document.getElementById("score").textContent = honest;
   document.getElementById("popularity").textContent = corrupt;
-
   document.getElementById("power-bar").style.width = honest + "%";
   document.getElementById("popularity-bar").style.width = corrupt + "%";
 
-  if (history.length < 4) {
+  if (history.length < 3) {
     if (honest > corrupt) earlyHonest = true;
     if (corrupt > honest) earlyCorrupt = true;
   }
 }
 
-function gameOver(msg) {
+function choice(type) {
+  if (type === "H") honest += 10;
+  if (type === "C") corrupt += 10;
+  history.push(type);
+  updateStats();
+}
+
+function endGame(text) {
   document.getElementById("choices").innerHTML = "";
   document.getElementById("game-over").innerHTML =
-    `<br><strong>${msg}</strong><br><br><button onclick='location.reload()'>Play Again</button>`;
-  endSound.play();
+    `<br><strong>${text}</strong><br><br><button onclick='location.reload()'>Play Again</button>`;
 }
 
 function determineFinal() {
-  if (honest >= 100) return "FINAL: THE SAINT — Pure honesty prevailed.";
-  if (corrupt >= 100) return "FINAL: THE TYRANT — You embraced absolute corruption.";
 
-  if (honest >= 80 && corrupt <= 20) return "FINAL: THE GUARDIAN OF TRUTH — Integrity shaped the nation.";
-  if (corrupt >= 80 && honest <= 20) return "FINAL: THE MANIPULATOR — You twisted society to your will.";
+  if (honest >= 100) return "FINAL: THE SAINT — Pure integrity defined your rule.";
+  if (corrupt >= 100) return "FINAL: THE TYRANT — Your corruption consumed the nation.";
 
-  if (honest >= 70 && corrupt >= 70) return "FINAL: THE DUAL MASK — Two identities, one ruler.";
+  if (honest >= 80 && corrupt <= 20) return "FINAL: THE GUARDIAN OF TRUTH — You defended justice.";
+  if (corrupt >= 80 && honest <= 20) return "FINAL: THE MANIPULATOR — Society bent to your will.";
 
-  if ((honest >= 60 && corrupt >= 60) && Math.abs(honest - corrupt) > 10)
-    return "FINAL: THE CHAOS BRINGER — You brought both hope and destruction.";
+  if (honest >= 70 && corrupt >= 70) return "FINAL: THE DUAL MASK — You lived two lives.";
 
   if (honest >= 40 && honest <= 60 && corrupt >= 40 && corrupt <= 60)
-    return "FINAL: THE OPPORTUNIST — You adapted to every situation.";
+    return "FINAL: THE OPPORTUNIST — You adapted to survive.";
 
   if (earlyCorrupt && honest > corrupt)
-    return "FINAL: THE REDEEMED — You overcame your darker instincts.";
+    return "FINAL: THE REDEEMED — You walked away from corruption.";
 
   if (earlyHonest && corrupt > honest)
-    return "FINAL: THE FALLEN HERO — You abandoned your principles.";
-
-  const transitions = history.filter((v, i) => i > 0 && history[i] !== history[i - 1]).length;
-  if (transitions >= 6) return "FINAL: THE STRATEGIST — Every move was calculated.";
-
-  if (Math.abs(honest - corrupt) < 10)
-    return "FINAL: THE NEUTRAL — You avoided extremes.";
+    return "FINAL: THE FALLEN HERO — You betrayed your own values.";
 
   if (honest < 40 && corrupt < 40)
-    return "FINAL: THE SURVIVOR — You navigated chaos without choosing sides.";
+    return "FINAL: THE SURVIVOR — You avoided all extremes.";
 
-  return "FINAL: UNDEFINED — You reached a unique path.";
+  if (Math.abs(honest - corrupt) < 10)
+    return "FINAL: THE NEUTRAL — Balance guided your actions.";
+
+  return "FINAL: UNKNOWN — Your path was unpredictable.";
 }
 
 function choose(option) {
-  clickSound.play();
 
-  const story = document.getElementById("story");
-  const choices = document.getElementById("choices");
-
-  if (option.includes("honest")) history.push("H");
-  if (option.includes("corrupt")) history.push("C");
-
-  /* PHASES (igual ao código expandido anterior) */
-  /* MANTIVE TODAS AS PERGUNTAS, APENAS ADAPTEI OS IDs */
-
+  // PHASE 1
   if (phase === 1) {
     if (option === "honest1") {
-      honest += 10;
-      story.innerHTML = "You act with integrity despite criticism.";
-      choices.innerHTML = `
+      choice("H");
+      document.getElementById("story").innerHTML = "You choose to act with honesty.";
+      document.getElementById("choices").innerHTML = `
         <button onclick="choose('honest2')">Stand firm</button>
-        <button onclick="choose('corrupt2')">Make secret deals</button>`;
+        <button onclick="choose('corrupt2')">Make a shady deal</button>`;
     } else {
-      corrupt += 10;
-      story.innerHTML = "You choose authority over ethics.";
-      choices.innerHTML = `
+      choice("C");
+      document.getElementById("story").innerHTML = "You use your power to influence the system.";
+      document.getElementById("choices").innerHTML = `
         <button onclick="choose('corrupt3')">Pressure journalists</button>
-        <button onclick="choose('honest3')">Admit wrongdoing</button>`;
+        <button onclick="choose('honest3')">Confess publicly</button>`;
     }
     phase++;
-    updateBars();
     return;
   }
 
-  /* ... (todo o restante do código das fases 2, 3, 4, 5 e 6 permanece igual) ... */
+  // PHASE 2
+  if (phase === 2) {
+    switch (option) {
+      case "honest2": choice("H"); break;
+      case "corrupt2": choice("C"); break;
+      case "corrupt3": choice("C"); break;
+      case "honest3": choice("H"); break;
+    }
 
-  /* PHASE 6 — FINAL */
-  if (phase === 6) {
-    if (option.includes("honest")) honest += 10;
-    else corrupt += 10;
+    document.getElementById("story").innerHTML = "The pressure increases. Your next move matters.";
+    document.getElementById("choices").innerHTML = `
+      <button onclick="choose('H4')">Expose corruption</button>
+      <button onclick="choose('C4')">Hide evidence</button>`;
 
-    const ending = determineFinal();
-    return gameOver(ending);
+    phase++;
+    return;
+  }
+
+  // PHASE 3
+  if (phase === 3) {
+    option.startsWith("H") ? choice("H") : choice("C");
+    document.getElementById("story").innerHTML = "Your actions are changing the nation.";
+    document.getElementById("choices").innerHTML = `
+      <button onclick="choose('H5')">Protect justice</button>
+      <button onclick="choose('C5')">Expand your power</button>`;
+    phase++;
+    return;
+  }
+
+  // PHASE 4 (LAST)
+  if (phase === 4) {
+    option.startsWith("H") ? choice("H") : choice("C");
+
+    const final = determineFinal();
+    endGame(final);
+    return;
   }
 }
 </script>
+
+</body>
+</html>
