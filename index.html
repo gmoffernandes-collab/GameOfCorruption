@@ -98,22 +98,25 @@ let honest = 0;
 let corrupt = 0;
 let phase = 1;
 
-let history = []; // <-- guarda sequências de honest/corrupt para finais especiais
+let history = [];
 let earlyCorrupt = false;
 let earlyHonest = false;
 
 const clickSound = document.getElementById("click-sound");
 const endSound = document.getElementById("end-sound");
-const bg = document.getElementById("bg-music");
-
-bg.volume = 0.2;
-bg.play().catch(() => {});
 
 function updateBars() {
-  document.getElementById("honest-val").textContent = honest;
-  document.getElementById("corrupt-val").textContent = corrupt;
-  document.getElementById("honest-bar").style.width = honest + "%";
-  document.getElementById("corrupt-bar").style.width = corrupt + "%";
+  // Limita os valores máximos em 100
+  const honestPercent = Math.min(honest, 100);
+  const corruptPercent = Math.min(corrupt, 100);
+
+  // Atualiza os números
+  document.getElementById("score").textContent = honestPercent;
+  document.getElementById("popularity").textContent = corruptPercent;
+
+  // Atualiza as barras
+  document.getElementById("power-bar").style.width = honestPercent + "%";
+  document.getElementById("popularity-bar").style.width = corruptPercent + "%";
 
   // Marca comportamento inicial
   if (history.length < 4) {
@@ -130,46 +133,35 @@ function gameOver(finalText) {
 }
 
 function determineFinal() {
-  // 1 — Finais puros de 100
   if (honest >= 100) return "FINAL: THE SAINT — Pure honesty prevailed.";
   if (corrupt >= 100) return "FINAL: THE TYRANT — You embraced absolute corruption.";
 
-  // 2 — Finais fortes de 80+
   if (honest >= 80 && corrupt <= 20) return "FINAL: THE GUARDIAN OF TRUTH — Integrity shaped the nation.";
   if (corrupt >= 80 && honest <= 20) return "FINAL: THE MANIPULATOR — You twisted society to your will.";
 
-  // 3 — Dual Mask
   if (honest >= 70 && corrupt >= 70) return "FINAL: THE DUAL MASK — Two identities, one ruler.";
 
-  // 4 — Chaos Bringer (alto dos dois mas não igual)
   if ((honest >= 60 && corrupt >= 60) && Math.abs(honest - corrupt) > 10)
     return "FINAL: THE CHAOS BRINGER — You brought both hope and destruction.";
 
-  // 5 — Opportunist (middle both)
   if (honest >= 40 && honest <= 60 && corrupt >= 40 && corrupt <= 60)
     return "FINAL: THE OPPORTUNIST — You adapted to every situation.";
 
-  // 6 — Redeemed (corrupt early, honest later)
   if (earlyCorrupt && honest > corrupt)
     return "FINAL: THE REDEEMED — You overcame your darker instincts.";
 
-  // 7 — Fallen Hero (honest early, corrupt later)
   if (earlyHonest && corrupt > honest)
     return "FINAL: THE FALLEN HERO — You abandoned your principles.";
 
-  // 8 — Strategist: alternância equilibrada
   const transitions = history.filter((v, i) => i > 0 && history[i] !== history[i - 1]).length;
   if (transitions >= 6) return "FINAL: THE STRATEGIST — Every move was calculated.";
 
-  // 9 — Neutral (difference < 10)
   if (Math.abs(honest - corrupt) < 10)
     return "FINAL: THE NEUTRAL — You avoided extremes.";
 
-  // 10 — Survivor: ambos baixos
   if (honest < 40 && corrupt < 40)
     return "FINAL: THE SURVIVOR — You navigated chaos without choosing sides.";
 
-  // fallback caso algo passe
   return "FINAL: UNDEFINED — You reached a unique path.";
 }
 
@@ -178,7 +170,6 @@ function choose(option) {
   const story = document.getElementById("story");
   const choices = document.getElementById("choices");
 
-  // registra o tipo da escolha
   if (option.includes("honest")) history.push("H");
   if (option.includes("corrupt")) history.push("C");
 
@@ -229,7 +220,6 @@ function choose(option) {
         <button onclick="choose('honest7')">Request investigation</button>
         <button onclick="choose('corrupt7')">Blame your team</button>`;
     }
-
     phase++;
     updateBars();
     return;
@@ -264,7 +254,6 @@ function choose(option) {
         <button onclick="choose('corrupt9')">Sell government contracts</button>
         <button onclick="choose('honest9')">Expose your crimes</button>`;
     }
-
     phase++;
     updateBars();
     return;
@@ -300,7 +289,6 @@ function choose(option) {
         <button onclick="choose('honest13')">Support anti-corruption courts</button>
         <button onclick="choose('corrupt13')">Escape responsibility</button>`;
     }
-
     phase++;
     updateBars();
     return;
@@ -337,3 +325,5 @@ function choose(option) {
   }
 }
 </script>
+</body>
+</html>
