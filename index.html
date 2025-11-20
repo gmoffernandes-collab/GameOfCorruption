@@ -118,8 +118,8 @@ function updateBars() {
   document.getElementById("power-bar").style.width = honestPercent + "%";
   document.getElementById("popularity-bar").style.width = corruptPercent + "%";
 
-  // Marca comportamento inicial
-  if (history.length < 4) {
+  // Marca comportamento inicial apenas na primeira escolha
+  if (history.length === 1) {
     if (honest > corrupt) earlyHonest = true;
     if (corrupt > honest) earlyCorrupt = true;
   }
@@ -133,12 +133,15 @@ function gameOver(finalText) {
 }
 
 function determineFinal() {
+  // 1 — Finais puros
   if (honest >= 100) return "FINAL: THE SAINT — Pure honesty prevailed.";
   if (corrupt >= 100) return "FINAL: THE TYRANT — You embraced absolute corruption.";
 
+  // 2 — Finais fortes
   if (honest >= 80 && corrupt <= 20) return "FINAL: THE GUARDIAN OF TRUTH — Integrity shaped the nation.";
   if (corrupt >= 80 && honest <= 20) return "FINAL: THE MANIPULATOR — You twisted society to your will.";
 
+  // 3 — Finais de dualidade
   if (honest >= 70 && corrupt >= 70) return "FINAL: THE DUAL MASK — Two identities, one ruler.";
 
   if ((honest >= 60 && corrupt >= 60) && Math.abs(honest - corrupt) > 10)
@@ -147,6 +150,14 @@ function determineFinal() {
   if (honest >= 40 && honest <= 60 && corrupt >= 40 && corrupt <= 60)
     return "FINAL: THE OPPORTUNIST — You adapted to every situation.";
 
+  // 4 — Neutral ou Survivor
+  if (Math.abs(honest - corrupt) < 10)
+    return "FINAL: THE NEUTRAL — You avoided extremes.";
+
+  if (honest < 40 && corrupt < 40)
+    return "FINAL: THE SURVIVOR — You navigated chaos without choosing sides.";
+
+  // 5 — Finais secretos (checados por último)
   if (earlyCorrupt && honest > corrupt)
     return "FINAL: THE REDEEMED — You overcame your darker instincts.";
 
@@ -154,13 +165,7 @@ function determineFinal() {
     return "FINAL: THE FALLEN HERO — You abandoned your principles.";
 
   const transitions = history.filter((v, i) => i > 0 && history[i] !== history[i - 1]).length;
-  if (transitions >= 6) return "FINAL: THE STRATEGIST — Every move was calculated.";
-
-  if (Math.abs(honest - corrupt) < 10)
-    return "FINAL: THE NEUTRAL — You avoided extremes.";
-
-  if (honest < 40 && corrupt < 40)
-    return "FINAL: THE SURVIVOR — You navigated chaos without choosing sides.";
+  if (transitions >= 8) return "FINAL: THE STRATEGIST — Every move was calculated.";
 
   return "FINAL: UNDEFINED — You reached a unique path.";
 }
