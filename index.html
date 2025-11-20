@@ -108,7 +108,7 @@
 
   <script>
     let score = 0;
-    let popularity = 50;
+    let popularity = 0;
     let phase = 1;
 
     const clickSound = document.getElementById('click-sound');
@@ -144,13 +144,13 @@
       // ======== PHASE 1 ========
       if (phase === 1) {
         if (option === 'honest') {
-          story.innerHTML = "You promise transparency and cut privileges. Powerful groups start to pressure you.";
+          story.innerHTML = "If necessary, I will do it even if it is unpopular.";
           updateStats(+5, +10);
           choices.innerHTML = `
             <button onclick="choose('resist')">Resist the pressure</button>
             <button onclick="choose('negotiate')">Negotiate with elites</button>`;
         } else if (option === 'corrupt') {
-          story.innerHTML = "You make deals with corporations and receive suspicious donations.";
+          story.innerHTML = "I decide what is right";
           updateStats(+20, -10);
           choices.innerHTML = `
             <button onclick="choose('bribe')">Bribe journalists</button>
@@ -253,6 +253,7 @@
   </script>
 </body>
 </html>
+
 
 
 
