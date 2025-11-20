@@ -18,6 +18,11 @@ h1 {
   font-size: 2.8em;
   margin-bottom: 10px;
 }
+#subtitle {
+  color: #f5b400;
+  font-size: 1.2em;
+  margin-bottom: 20px;
+}
 #stats {
   display: flex;
   justify-content: center;
@@ -69,6 +74,9 @@ button:hover { background-color: #f5b400; color: #111; }
 </head>
 <body>
 <h1>Game of Corruption</h1>
+<p id="subtitle">
+  There are <strong>10 possible endings</strong>. Your choices will shape your legacy!
+</p>
 
 <div id="stats">
   <div>
@@ -164,13 +172,13 @@ function choose(option) {
   /* ---------------- PHASE 1 ---------------- */
   if (phase === 1) {
     if (option === "honest1") {
-      honest += 20; // ajustado
+      honest += 20;
       story.innerHTML = "You openly share your policies with the citizens.";
       choices.innerHTML = `
         <button onclick="choose('honest2')">Investigate government waste</button>
         <button onclick="choose('corrupt2')">Privately pressure rivals</button>`;
     } else {
-      corrupt += 20; // ajustado
+      corrupt += 20;
       story.innerHTML = "You secretly negotiate lucrative deals with elite businessmen.";
       choices.innerHTML = `
         <button onclick="choose('corrupt3')">Bribe officials quietly</button>
