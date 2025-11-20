@@ -42,8 +42,8 @@ h1 {
   height: 100%;
   transition: width 0.4s ease-in-out;
 }
-#power-bar { background-color: #f5b400; width: 0%; }
-#popularity-bar { background-color: #2ecc71; width: 0%; }
+#power-bar { background-color: #3498db; width: 0%; }       /* Honesto: azul */
+#popularity-bar { background-color: #e74c3c; width: 0%; }  /* Corrupto: vermelho */
 #story {
   margin-top: 30px;
   font-size: 1.2em;
@@ -105,22 +105,15 @@ button:hover { background-color: #f5b400; color: #111; }
 let honest = 0;
 let corrupt = 0;
 let phase = 1;
-
-let earlyChoice = null; // "H" ou "C" para finais secretos
-let history = [];
-
+let earlyChoice = null; // "H" ou "C"
 const clickSound = document.getElementById("click-sound");
 const endSound = document.getElementById("end-sound");
 
 function updateBars() {
-  const honestPercent = Math.min(honest, 100);
-  const corruptPercent = Math.min(corrupt, 100);
-
-  document.getElementById("score").textContent = honestPercent;
-  document.getElementById("popularity").textContent = corruptPercent;
-
-  document.getElementById("power-bar").style.width = honestPercent + "%";
-  document.getElementById("popularity-bar").style.width = corruptPercent + "%";
+  document.getElementById("score").textContent = Math.min(honest,100);
+  document.getElementById("popularity").textContent = Math.min(corrupt,100);
+  document.getElementById("power-bar").style.width = Math.min(honest,100) + "%";
+  document.getElementById("popularity-bar").style.width = Math.min(corrupt,100) + "%";
 }
 
 function gameOver(finalText) {
@@ -131,25 +124,19 @@ function gameOver(finalText) {
 }
 
 function determineFinal() {
-  // Finais puros
   if (honest >= 100) return "FINAL: THE SAINT — Pure honesty prevailed.";
   if (corrupt >= 100) return "FINAL: THE TYRANT — Absolute corruption rules.";
 
-  // Finais fortes intermediários
   if (honest >= 70 && corrupt <= 30) return "FINAL: THE GUARDIAN OF TRUTH — Integrity shaped the nation.";
   if (corrupt >= 70 && honest <= 30) return "FINAL: THE MANIPULATOR — Society bowed to your will.";
 
-  // Dual Mask
   if (honest >= 50 && corrupt >= 50) return "FINAL: THE DUAL MASK — Balanced power and honesty.";
 
-  // Finais secretos
   if (earlyChoice === "C" && honest > corrupt) return "FINAL: THE REDEEMED — You overcame your darker instincts.";
   if (earlyChoice === "H" && corrupt > honest) return "FINAL: THE FALLEN HERO — Principles abandoned.";
 
-  // Neutro
   if (Math.abs(honest - corrupt) <= 15) return "FINAL: THE NEUTRAL — Balanced approach.";
 
-  // Survivor
   if (honest < 30 && corrupt < 30) return "FINAL: THE SURVIVOR — You navigated chaos without extremes.";
 
   return "FINAL: UNDEFINED — A unique path was taken.";
@@ -160,27 +147,25 @@ function choose(option) {
   const story = document.getElementById("story");
   const choices = document.getElementById("choices");
 
-  // Marca a primeira escolha para fins secretos
-  if (phase === 1) {
-    if (option.includes("honest")) earlyChoice = "H";
-    else earlyChoice = "C";
-  }
+  if (phase === 1) earlyChoice = option.includes("honest") ? "H" : "C";
 
-  /* ---------------- PHASES ---------------- */
+  // Fase 1
   if (phase === 1) {
     if (option === "honest1") { honest += 20; story.innerHTML = "You share your policies openly."; choices.innerHTML = `<button onclick="choose('honest2')">Investigate government waste</button><button onclick="choose('corrupt2')">Privately pressure rivals</button>`; }
     else { corrupt += 20; story.innerHTML = "You make secret deals with tycoons."; choices.innerHTML = `<button onclick="choose('corrupt3')">Bribe officials quietly</button><button onclick="choose('honest3')">Reveal part of the deals to public</button>`; }
     phase++; updateBars(); return;
   }
 
+  // Fase 2
   if (phase === 2) {
     if (option === "honest2") { honest += 20; story.innerHTML = "You uncover embezzlement."; choices.innerHTML = `<button onclick="choose('honest4')">Expose corrupt ministers</button><button onclick="choose('corrupt4')">Use info for leverage</button>`; }
     else if (option === "corrupt2") { corrupt += 20; story.innerHTML = "You manipulate rivals."; choices.innerHTML = `<button onclick="choose('corrupt5')">Demand loyalty</button><button onclick="choose('honest5')">Justify publicly</button>`; }
-    else if (option === "corrupt3") { corrupt += 10; story.innerHTML = "Officials follow your orders."; choices.innerHTML = `<button onclick="choose('corrupt6')">Suppress media</button><button onclick="choose('honest6')">Reveal partial truth</button>`; }
-    else if (option === "honest3") { honest += 10; story.innerHTML = "Transparency boosts popularity."; choices.innerHTML = `<button onclick="choose('honest7')">Citizen oversight</button><button onclick="choose('corrupt7')">Exploit trust</button>`; }
+    else if (option === "corrupt3") { corrupt += 20; story.innerHTML = "Officials follow your orders."; choices.innerHTML = `<button onclick="choose('corrupt6')">Suppress media</button><button onclick="choose('honest6')">Reveal partial truth</button>`; }
+    else if (option === "honest3") { honest += 20; story.innerHTML = "Transparency boosts popularity."; choices.innerHTML = `<button onclick="choose('honest7')">Citizen oversight</button><button onclick="choose('corrupt7')">Exploit trust</button>`; }
     phase++; updateBars(); return;
   }
 
+  // Fase 3
   if (phase === 3) {
     if (option.includes("honest")) honest += 20; else corrupt += 20;
     story.innerHTML = "Your decisions ripple through the nation.";
@@ -188,13 +173,15 @@ function choose(option) {
     phase++; updateBars(); return;
   }
 
+  // Fase 4
   if (phase === 4) {
-    if (option.includes("honest")) honest += 10; else corrupt += 10;
+    if (option.includes("honest")) honest += 20; else corrupt += 20;
     story.innerHTML = "You face your penultimate decision.";
     choices.innerHTML = `<button onclick="choose('honest9')">Promote democracy</button><button onclick="choose('corrupt9')">Exploit system</button>`;
     phase++; updateBars(); return;
   }
 
+  // Fase 5
   if (phase === 5) {
     if (option.includes("honest")) honest += 20; else corrupt += 20;
     updateBars();
