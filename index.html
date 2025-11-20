@@ -137,25 +137,19 @@ function gameOver(finalText) {
 }
 
 function determineFinal() {
-  // Finais puros
   if (honest >= 100) return "FINAL: THE SAINT — Pure honesty prevailed.";
   if (corrupt >= 100) return "FINAL: THE TYRANT — Absolute corruption rules.";
 
-  // Finais intermediários
   if (honest >= 70 && corrupt <= 30) return "FINAL: THE GUARDIAN OF TRUTH — Integrity shaped the nation.";
   if (corrupt >= 70 && honest <= 30) return "FINAL: THE MANIPULATOR — Society bowed to your will.";
 
-  // Mistura alta
   if (honest >= 50 && corrupt >= 50) return "FINAL: THE DUAL MASK — You balanced power and honesty.";
 
-  // Secretos
   if (earlyCorrupt && honest > corrupt) return "FINAL: THE REDEEMED — You overcame your darker instincts.";
   if (earlyHonest && corrupt > honest) return "FINAL: THE FALLEN HERO — Principles abandoned.";
 
-  // Neutro
   if (Math.abs(honest - corrupt) <= 15) return "FINAL: THE NEUTRAL — Balanced approach.";
 
-  // Baixos ambos
   if (honest < 30 && corrupt < 30) return "FINAL: THE SURVIVOR — You navigated chaos without extremes.";
 
   return "FINAL: UNDEFINED — A unique path was taken.";
@@ -226,18 +220,33 @@ function choose(option) {
     if (option.includes("honest")) honest += 20;
     else corrupt += 20;
 
-    story.innerHTML = "Your actions are shaping the nation deeply.";
+    story.innerHTML = "Your decisions ripple through the nation.";
     choices.innerHTML = `
-      <button onclick="choose('final1')">Make a defining decision for your legacy</button>
-      <button onclick="choose('final2')">Take a balanced approach to power</button>`;
+      <button onclick="choose('honest8')">Strengthen public institutions</button>
+      <button onclick="choose('corrupt8')">Consolidate power secretly</button>`;
 
     phase++;
     updateBars();
     return;
   }
 
-  /* ---------------- PHASE 4 (FINAL) ---------------- */
+  /* ---------------- PHASE 4 ---------------- */
   if (phase === 4) {
+    if (option.includes("honest")) honest += 20;
+    else corrupt += 20;
+
+    story.innerHTML = "You face your penultimate decision.";
+    choices.innerHTML = `
+      <button onclick="choose('honest9')">Promote democracy and transparency</button>
+      <button onclick="choose('corrupt9')">Exploit system for personal gain</button>`;
+
+    phase++;
+    updateBars();
+    return;
+  }
+
+  /* ---------------- PHASE 5 (FINAL) ---------------- */
+  if (phase === 5) {
     if (option.includes("honest")) honest += 20;
     else corrupt += 20;
 
